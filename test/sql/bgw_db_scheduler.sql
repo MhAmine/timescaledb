@@ -51,6 +51,9 @@ BEGIN
 END
 $BODY$;
 
+-- Remove any default jobs, e.g., telemetry
+DELETE FROM _timescaledb_config.bgw_job WHERE TRUE;
+
 \c single :ROLE_DEFAULT_PERM_USER
 
 CREATE TABLE public.bgw_log(

@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS _timescaledb_config.bgw_job (
     max_runtime         INTERVAL    NOT NULL,
     max_retries         INT         NOT NULL,
     retry_period        INTERVAL    NOT NULL,
-    CONSTRAINT  valid_job_type CHECK (job_type IN ('update_check'))
+    CONSTRAINT  valid_job_type CHECK (job_type IN ('telemetry_and_version_check_if_enabled'))
 );
 SELECT pg_catalog.pg_extension_config_dump('_timescaledb_config.bgw_job', '');
 SELECT pg_catalog.pg_extension_config_dump(pg_get_serial_sequence('_timescaledb_config.bgw_job','id'), '');
