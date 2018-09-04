@@ -14,8 +14,11 @@ DROP FUNCTION _timescaledb_internal.insert_blocker_trigger_add(REGCLASS);
 CREATE SCHEMA IF NOT EXISTS _timescaledb_config;
 GRANT USAGE ON SCHEMA _timescaledb_config TO PUBLIC;
 
+CREATE SEQUENCE IF NOT EXISTS _timescaledb_config.bgw_job_id_seq MINVALUE 1000;
+SELECT pg_catalog.pg_extension_config_dump('_timescaledb_config.bgw_job_id_seq', '');
+
 CREATE TABLE IF NOT EXISTS _timescaledb_config.bgw_job (
-    id                  SERIAL      PRIMARY KEY,
+    id                  INTEGER PRIMARY KEY DEFAULT nextval('_timescaledb_config.bgw_job_id_seq'),
     application_name    NAME        NOT NULL,
     job_type            NAME        NOT NULL,
     schedule_interval   INTERVAL    NOT NULL,
@@ -24,8 +27,9 @@ CREATE TABLE IF NOT EXISTS _timescaledb_config.bgw_job (
     retry_period        INTERVAL    NOT NULL,
     CONSTRAINT  valid_job_type CHECK (job_type IN ('telemetry_and_version_check_if_enabled'))
 );
-SELECT pg_catalog.pg_extension_config_dump('_timescaledb_config.bgw_job', '');
-SELECT pg_catalog.pg_extension_config_dump(pg_get_serial_sequence('_timescaledb_config.bgw_job','id'), '');
+ALTER SEQUENCE _timescaledb_config.bgw_job_id_seq OWNED BY _timescaledb_config.bgw_job.id;
+
+SELECT pg_catalog.pg_extension_config_dump('_timescaledb_config.bgw_job', 'WHERE id >= 1000');
 
 CREATE TABLE IF NOT EXISTS _timescaledb_internal.bgw_job_stat (
     job_id                  INT         PRIMARY KEY REFERENCES _timescaledb_config.bgw_job(id) ON DELETE CASCADE,
@@ -62,5 +66,3 @@ CREATE TABLE IF NOT EXISTS _timescaledb_catalog.installation_metadata (
 SELECT pg_catalog.pg_extension_config_dump('_timescaledb_catalog.installation_metadata', $$WHERE key='exported_uuid'$$);
 
 INSERT INTO _timescaledb_catalog.installation_metadata SELECT 'install_timestamp', to_timestamp(0);
-INSERT INTO _timescaledb_config.bgw_job (application_name, job_type, schedule_INTERVAL, max_runtime, max_retries, retry_period) VALUES
-('Telemetry Reporter', 'telemetry_and_version_check_if_enabled', INTERVAL '24h', INTERVAL '100s', -1, INTERVAL '1h');

@@ -96,9 +96,9 @@ SELECT ts_bgw_params_reset_time();
 INSERT INTO _timescaledb_config.bgw_job (application_name, job_type, schedule_INTERVAL, max_runtime, max_retries, retry_period) VALUES
 ('test_job_1', 'bgw_test_job_1', INTERVAL '100ms', INTERVAL '100s', 3, INTERVAL '1s');
 select * from _timescaledb_config.bgw_job;
- id | application_name |    job_type    | schedule_interval |   max_runtime   | max_retries | retry_period 
-----+------------------+----------------+-------------------+-----------------+-------------+--------------
-  2 | test_job_1       | bgw_test_job_1 | @ 0.1 secs        | @ 1 min 40 secs |           3 | @ 1 sec
+  id  | application_name |    job_type    | schedule_interval |   max_runtime   | max_retries | retry_period 
+------+------------------+----------------+-------------------+-----------------+-------------+--------------
+ 1000 | test_job_1       | bgw_test_job_1 | @ 0.1 secs        | @ 1 min 40 secs |           3 | @ 1 sec
 (1 row)
 
 \c single :ROLE_DEFAULT_PERM_USER
@@ -113,7 +113,7 @@ SELECT job_id, next_start, last_finish as until_next, last_run_success, total_ru
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |           next_start           |          until_next          | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+--------------------------------+------------------------------+------------------+------------+-----------------+----------------+---------------
-      2 | Fri Dec 31 16:00:00.1 1999 PST | Fri Dec 31 16:00:00 1999 PST | t                |          1 |               1 |              0 |             0
+   1000 | Fri Dec 31 16:00:00.1 1999 PST | Fri Dec 31 16:00:00 1999 PST | t                |          1 |               1 |              0 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -135,7 +135,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      2 | @ 0.1 secs | t                |          1 |               1 |              0 |             0
+   1000 | @ 0.1 secs | t                |          1 |               1 |              0 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -158,7 +158,7 @@ SELECT job_id, next_start, last_finish, last_run_success, total_runs, total_succ
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |           next_start           |          last_finish           | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+--------------------------------+--------------------------------+------------------+------------+-----------------+----------------+---------------
-      2 | Fri Dec 31 16:00:00.2 1999 PST | Fri Dec 31 16:00:00.1 1999 PST | t                |          2 |               2 |              0 |             0
+   1000 | Fri Dec 31 16:00:00.2 1999 PST | Fri Dec 31 16:00:00.1 1999 PST | t                |          2 |               2 |              0 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -185,7 +185,7 @@ SELECT job_id, next_start, last_finish, last_run_success, total_runs, total_succ
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |           next_start           |          last_finish           | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+--------------------------------+--------------------------------+------------------+------------+-----------------+----------------+---------------
-      2 | Fri Dec 31 16:00:00.3 1999 PST | Fri Dec 31 16:00:00.2 1999 PST | t                |          3 |               3 |              0 |             0
+   1000 | Fri Dec 31 16:00:00.3 1999 PST | Fri Dec 31 16:00:00.2 1999 PST | t                |          3 |               3 |              0 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -232,7 +232,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      3 | @ 0.1 secs | f                |          1 |               0 |              1 |             0
+   1001 | @ 0.1 secs | f                |          1 |               0 |              1 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -254,7 +254,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      3 | @ 0.2 secs | f                |          2 |               0 |              2 |             0
+   1001 | @ 0.2 secs | f                |          2 |               0 |              2 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -280,7 +280,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      3 | @ 0.4 secs | f                |          3 |               0 |              3 |             0
+   1001 | @ 0.4 secs | f                |          3 |               0 |              3 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -309,7 +309,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      3 | @ 0.5 secs | f                |          4 |               0 |              4 |             0
+   1001 | @ 0.5 secs | f                |          4 |               0 |              4 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -343,7 +343,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      3 | @ 0.5 secs | f                |          5 |               0 |              5 |             0
+   1001 | @ 0.5 secs | f                |          5 |               0 |              5 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -404,7 +404,7 @@ SELECT job_id, last_finish, next_start, last_run_success, total_runs, total_succ
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |          last_finish           |           next_start            | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+--------------------------------+---------------------------------+------------------+------------+-----------------+----------------+---------------+---------------------
-      4 | Fri Dec 31 16:00:00.2 1999 PST | Fri Dec 31 16:00:00.25 1999 PST | f                |          1 |               0 |              1 |             0 |                   0
+   1002 | Fri Dec 31 16:00:00.2 1999 PST | Fri Dec 31 16:00:00.25 1999 PST | f                |          1 |               0 |              1 |             0 |                   0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -441,7 +441,7 @@ SELECT job_id, last_finish-next_start as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |  until_next  | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+--------------+------------------+------------+-----------------+----------------+---------------+---------------------
-      5 | @ 5 secs ago | t                |          1 |               1 |              0 |             0 |                   0
+   1003 | @ 5 secs ago | t                |          1 |               1 |              0 |             0 |                   0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -510,7 +510,7 @@ SELECT job_id, next_start - last_finish as until_next, last_run_success, total_r
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      6 | @ 0.5 secs | f                |          1 |               0 |              1 |             0
+   1004 | @ 0.5 secs | f                |          1 |               0 |              1 |             0
 (1 row)
 
 -- Test that the job is able to run again and succeed
@@ -524,7 +524,7 @@ SELECT job_id, next_start-last_finish as until_next, last_run_success, total_run
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | until_next | last_run_success | total_runs | total_successes | total_failures | total_crashes 
 --------+------------+------------------+------------+-----------------+----------------+---------------
-      6 | @ 5 secs   | t                |          2 |               1 |              1 |             0
+   1004 | @ 5 secs   | t                |          2 |               1 |              1 |             0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -586,7 +586,7 @@ SELECT job_id, last_finish, last_run_success, total_runs, total_successes, total
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | last_finish | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+-------------+------------------+------------+-----------------+----------------+---------------+---------------------
-      7 | -infinity   | f                |          1 |               0 |              0 |             1 |                   1
+   1005 | -infinity   | f                |          1 |               0 |              0 |             1 |                   1
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -612,7 +612,7 @@ SELECT job_id, last_finish, next_start, last_run_success, total_runs, total_succ
 FROM _timescaledb_internal.bgw_job_stat;
  job_id | last_finish | next_start | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+-------------+------------+------------------+------------+-----------------+----------------+---------------+---------------------
-      7 | -infinity   | -infinity  | f                |          1 |               0 |              0 |             1 |                   1
+   1005 | -infinity   | -infinity  | f                |          1 |               0 |              0 |             1 |                   1
 (1 row)
 
 --But after the 5 min period the job is again run
@@ -626,7 +626,7 @@ SELECT job_id, last_finish, next_start, last_run_success, total_runs, total_succ
 FROM _timescaledb_internal.bgw_job_stat;
  job_id |          last_finish           |           next_start           | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+--------------------------------+--------------------------------+------------------+------------+-----------------+----------------+---------------+---------------------
-      7 | Fri Dec 31 16:05:00.5 1999 PST | Fri Dec 31 16:05:05.5 1999 PST | t                |          2 |               1 |              0 |             1 |                   0
+   1005 | Fri Dec 31 16:05:00.5 1999 PST | Fri Dec 31 16:05:05.5 1999 PST | t                |          2 |               1 |              0 |             1 |                   0
 (1 row)
 
 SELECT * FROM bgw_log;
@@ -681,25 +681,25 @@ FROM _timescaledb_internal.bgw_job_stat
 ORDER BY job_id;
  job_id | last_run_success | total_runs | total_successes | total_failures | total_crashes | consecutive_crashes 
 --------+------------------+------------+-----------------+----------------+---------------+---------------------
-      8 | t                |          1 |               1 |              0 |             0 |                   0
-      9 | t                |          1 |               1 |              0 |             0 |                   0
-     10 | t                |          1 |               1 |              0 |             0 |                   0
-     11 | t                |          1 |               1 |              0 |             0 |                   0
-     12 | t                |          1 |               1 |              0 |             0 |                   0
-     13 | t                |          1 |               1 |              0 |             0 |                   0
-     14 | t                |          2 |               1 |              1 |             0 |                   0
+   1006 | t                |          1 |               1 |              0 |             0 |                   0
+   1007 | t                |          1 |               1 |              0 |             0 |                   0
+   1008 | t                |          1 |               1 |              0 |             0 |                   0
+   1009 | t                |          1 |               1 |              0 |             0 |                   0
+   1010 | t                |          1 |               1 |              0 |             0 |                   0
+   1011 | t                |          1 |               1 |              0 |             0 |                   0
+   1012 | t                |          2 |               1 |              1 |             0 |                   0
 (7 rows)
 
 SELECT * FROM bgw_log WHERE application_name = 'DB Scheduler' ORDER BY mock_time, application_name, msg_no;
- msg_no | mock_time | application_name |                                  msg                                   
---------+-----------+------------------+------------------------------------------------------------------------
+ msg_no | mock_time | application_name |                                   msg                                    
+--------+-----------+------------------+--------------------------------------------------------------------------
       0 |         0 | DB Scheduler     | [TESTING] Registered new background worker
       1 |         0 | DB Scheduler     | [TESTING] Registered new background worker
       2 |         0 | DB Scheduler     | [TESTING] Registered new background worker
       3 |         0 | DB Scheduler     | [TESTING] Registered new background worker
       4 |         0 | DB Scheduler     | [TESTING] Registered new background worker
       5 |         0 | DB Scheduler     | [TESTING] Registered new background worker
-      6 |         0 | DB Scheduler     | failed to launch job 14 "test_job_3_long_7": out of background workers
+      6 |         0 | DB Scheduler     | failed to launch job 1012 "test_job_3_long_7": out of background workers
       7 |         0 | DB Scheduler     | [TESTING] Wait until 10000, started at 0
       8 |     10000 | DB Scheduler     | [TESTING] Registered new background worker
       9 |     10000 | DB Scheduler     | [TESTING] Wait until 500000, started at 10000
