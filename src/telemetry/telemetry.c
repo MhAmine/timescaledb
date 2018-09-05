@@ -209,16 +209,24 @@ build_version_body(void)
 	JsonbValue *result;
 	Jsonb	   *jb;
 	StringInfo	jtext;
-	JsonbParseState *parseState = NULL;
 	VersionOSInfo osinfo;
+	bool started = false;
+	JsonbParseState *parseState = NULL;
 
 	pushJsonbValue(&parseState, WJB_BEGIN_OBJECT, NULL);
+	
+	if (!IsTransactionOrTransactionBlock()) {
+		started = true;
+		StartTransactionCommand();
+	}
+
 	jsonb_add_pair(parseState, REQ_DB_UUID,
 				   DatumGetCString(DirectFunctionCall1(uuid_out, metadata_get_uuid())));
 	jsonb_add_pair(parseState, REQ_EXPORTED_DB_UUID,
 				   DatumGetCString(DirectFunctionCall1(uuid_out, metadata_get_exported_uuid())));
 	jsonb_add_pair(parseState, REQ_INSTALL_TIME,
 				   DatumGetCString(DirectFunctionCall1(timestamptz_out, metadata_get_install_timestamp())));
+
 	jsonb_add_pair(parseState, REQ_INSTALL_METHOD, TIMESCALEDB_INSTALL_METHOD);
 
 	if (version_get_os_info(&osinfo))
@@ -244,6 +252,8 @@ build_version_body(void)
 	pushJsonbValue(&parseState, WJB_KEY, &ext_key);
 	add_related_extensions(parseState);
 
+	if (started)
+		CommitTransactionCommand();
 	result = pushJsonbValue(&parseState, WJB_END_OBJECT, NULL);
 
 	jb = JsonbValueToJsonb(result);

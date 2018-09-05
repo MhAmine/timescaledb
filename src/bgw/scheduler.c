@@ -128,6 +128,8 @@ worker_state_cleanup(ScheduledBgwJob *sjob)
 	if (sjob->may_need_mark_end)
 	{
 		BgwJobStat *job_stat = bgw_job_stat_find(sjob->job.fd.id);
+		
+		Assert(job_stat != NULL);
 
 		if (!bgw_job_stat_end_was_marked(job_stat))
 		{
