@@ -210,16 +210,10 @@ build_version_body(void)
 	Jsonb	   *jb;
 	StringInfo	jtext;
 	VersionOSInfo osinfo;
-	bool started = false;
 	JsonbParseState *parseState = NULL;
 
 	pushJsonbValue(&parseState, WJB_BEGIN_OBJECT, NULL);
 	
-	if (!IsTransactionOrTransactionBlock()) {
-		started = true;
-		StartTransactionCommand();
-	}
-
 	jsonb_add_pair(parseState, REQ_DB_UUID,
 				   DatumGetCString(DirectFunctionCall1(uuid_out, metadata_get_uuid())));
 	jsonb_add_pair(parseState, REQ_EXPORTED_DB_UUID,
@@ -252,8 +246,6 @@ build_version_body(void)
 	pushJsonbValue(&parseState, WJB_KEY, &ext_key);
 	add_related_extensions(parseState);
 
-	if (started)
-		CommitTransactionCommand();
 	result = pushJsonbValue(&parseState, WJB_END_OBJECT, NULL);
 
 	jb = JsonbValueToJsonb(result);
@@ -313,9 +305,16 @@ telemetry_main()
 {
 	char	   *response;
 	Connection *conn;
+	bool started = false;
+	
 
 	if (!telemetry_on())
 		return;
+	
+	if (!IsTransactionOrTransactionBlock()) {
+		started = true;
+		StartTransactionCommand();
+	}
 
 	conn = telemetry_connect();
 
@@ -328,6 +327,9 @@ telemetry_main()
 	process_response(response);
 	connection_close(conn);
 	connection_destroy(conn);
+	
+	if (started)
+		CommitTransactionCommand();
 	return;
 }
 
